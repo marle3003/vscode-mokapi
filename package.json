@@ -4,6 +4,10 @@
 	"description": "Makes it easy to create Mokapi scripts",
 	"version": "0.0.1",
 	"publisher": "marle",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/marle3003/vscode-mokapi.git"
+	},
 	"engines": {
 		"vscode": "^1.61.0"
 	},

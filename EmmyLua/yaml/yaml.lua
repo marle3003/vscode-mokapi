@@ -11,6 +11,6 @@ function yaml.parse(content) end
 ---@param path string the encoded YAML value
 ---@return table result the decoded YAML value
 ---@return table error
-function yaml.readFile(path) end
+function yaml.read_file(path) end
 
 return yaml

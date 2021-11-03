@@ -2,26 +2,41 @@
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
 
+const events = {
+	getHover: require("./events").getHover
+}
+
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
-	
-	// Use the console to output diagnostic information (console.log) and errors (console.error)
-	// This line of code will only be executed once when your extension is activated
-	console.log('Congratulations, your extension "mokapi" is now active!');
+	console.log("loaded marle.mokapi", context.extension.id)
 
 	setExternalLibrary("EmmyLua", true);
 	
-	// The command has been defined in the package.json file
-	// Now provide the implementation of the command with registerCommand
-	// The commandId parameter must match the command field in package.json
-	let disposable = vscode.commands.registerCommand('mokapi.helloWorld', () => {
-		// The code you place here will be executed every time your command is executed
-		// Display a message box to the user
-		vscode.window.showInformationMessage('Hello World from Mokapi!');
-	});
+	const hover = vscode.languages.registerHoverProvider(
+		"lua",
+		{
+			provideHover(document: vscode.TextDocument, position: vscode.Position) {
+				const range = document.getWordRangeAtPosition(position)
+				if (range) {
+					const start = new vscode.Position(range.start.line, range.start.character-8)
+					const before = document.getText(new vscode.Range(start, range.start))
+					if (before === '.event("' || before === ':event("') {
+						const word = document.getText(range)
+						const lword = word.toLowerCase()
+						
+						let hover = events.getHover(lword)
+						if (hover != null){
+							return hover
+						}
+					}
+				}
+				return null
+			}
+		}
+	)
 
-	context.subscriptions.push(disposable);
+	context.subscriptions.push(hover)
 }
 
 // this method is called when your extension is deactivated
@@ -58,5 +73,3 @@ function setExternalLibrary(folder: string, enable: boolean) {
 		config.update("workspace.library", library, true);
 	}
 }
-
-setExternalLibrary("EmmyLua", true);
